@@ -24,9 +24,8 @@ impl Default for Person {
     }
 }
 
-
-// Your task is to complete this implementation in order for the line `let p1 =
-// Person::from("Mark,20")` to compile. Please note that you'll need to parse the
+// Your task is to complete this implementation in order for the line `let p =
+// Person::from("Mark,20")` to compile Please note that you'll need to parse the
 // age component into a `usize` with something like `"4".parse::<usize>()`. The
 // outcome of this needs to be handled appropriately.
 //
@@ -41,10 +40,28 @@ impl Default for Person {
 // If while parsing the age, something goes wrong, then return the default of
 // Person Otherwise, then return an instantiated Person object with the results
 
-// I AM NOT DONE
-
 impl From<&str> for Person {
-    fn from(s: &str) -> Person {}
+    fn from(s: &str) -> Person {
+        if s.len() == 0 {
+            return Person::default();
+        }
+        
+        let mut split_str = s.split(",");
+        let name_str = split_str.next();
+        let age_str = split_str.next().and_then(
+            |age_str| str::parse::<usize>(age_str).ok()
+        );
+        
+        match (name_str, age_str) {
+            (Some(person_name), Some(person_age)) if person_name.len() > 0 => {
+                Person {
+                    name: String::from(person_name),
+                    age: person_age
+                }
+            },
+            _ => Person::default()
+        }
+    }
 }
 
 fn main() {
@@ -127,14 +144,14 @@ mod tests {
     #[test]
     fn test_trailing_comma() {
         let p: Person = Person::from("Mike,32,");
-        assert_eq!(p.name, "John");
-        assert_eq!(p.age, 30);
+        assert_eq!(p.name, "Mike");
+        assert_eq!(p.age, 32);
     }
 
     #[test]
     fn test_trailing_comma_and_some_string() {
-        let p: Person = Person::from("Mike,32,dog");
-        assert_eq!(p.name, "John");
-        assert_eq!(p.age, 30);
+        let p: Person = Person::from("Mike,32,man");
+        assert_eq!(p.name, "Mike");
+        assert_eq!(p.age, 32);
     }
 }

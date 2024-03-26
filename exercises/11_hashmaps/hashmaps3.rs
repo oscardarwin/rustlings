@@ -4,18 +4,15 @@
 // the form : "<team_1_name>,<team_2_name>,<team_1_goals>,<team_2_goals>"
 // Example: England,France,4,2 (England scored 4 goals, France 2).
 //
-// You have to build a scores table containing the name of the team, the total
-// number of goals the team scored, and the total number of goals the team 
-// conceded. One approach to build the scores table is to use a Hashmap. 
-// The solution is partially written to use a Hashmap, 
-// complete it to pass the test.
+// You have to build a scores table containing the name of the team, goals the
+// team scored, and goals the team conceded. One approach to build the scores
+// table is to use a Hashmap. The solution is partially written to use a
+// Hashmap, complete it to pass the test.
 //
 // Make me pass the tests!
 //
 // Execute `rustlings hint hashmaps3` or use the `hint` watch subcommand for a
 // hint.
-
-// I AM NOT DONE
 
 use std::collections::HashMap;
 
@@ -23,6 +20,19 @@ use std::collections::HashMap;
 struct Team {
     goals_scored: u8,
     goals_conceded: u8,
+}
+
+fn add_scores_to_team(scores: &mut HashMap<String, Team>, team_name: String, goals_conceded: u8, goals_scored: u8) {
+    match scores.get_mut(&team_name) {
+        Some(team) => {
+            team.goals_scored += goals_scored;
+            team.goals_conceded += goals_conceded;
+        },
+        None => {
+            let new_score_record = Team { goals_scored, goals_conceded };
+            scores.insert(team_name, new_score_record);
+        }
+    }
 }
 
 fn build_scores_table(results: String) -> HashMap<String, Team> {
@@ -35,6 +45,9 @@ fn build_scores_table(results: String) -> HashMap<String, Team> {
         let team_1_score: u8 = v[2].parse().unwrap();
         let team_2_name = v[1].to_string();
         let team_2_score: u8 = v[3].parse().unwrap();
+        
+        add_scores_to_team(&mut scores, team_1_name, team_2_score, team_1_score);
+        add_scores_to_team(&mut scores, team_2_name, team_1_score, team_2_score);
         // TODO: Populate the scores table with details extracted from the
         // current line. Keep in mind that goals scored by team_1
         // will be the number of goals conceded by team_2, and similarly
